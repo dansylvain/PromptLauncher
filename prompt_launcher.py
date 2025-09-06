@@ -142,7 +142,7 @@ def main():
     ]
 
     # Create the Window
-    window = sg.Window('PromptLauncher V2', layout, resizable=True,
+    window = sg.Window('PromptLauncher V1', layout, resizable=True,
     location=(x, y))
 
     # Event Loop to process "events" and get the "values" of the inputs
