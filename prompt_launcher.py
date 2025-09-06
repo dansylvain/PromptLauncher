@@ -74,6 +74,44 @@ def add_prompt_window():
     window.close()
     return new_prompt_data
 
+# --- NEW: Function to handle the 'Edit Prompt' window ---
+def edit_prompt_window(prompt_name, prompt_text):
+    """
+    Creates and displays a modal window to edit an existing prompt.
+    Returns a tuple (new_prompt_name, new_prompt_text) or None if canceled.
+    """
+    layout = [
+        [sg.Text("Prompt Name (Key):")],
+        [sg.Input(prompt_name, key='-PROMPT_NAME-', expand_x=True)],
+        [sg.Text("Prompt Context (Value):")],
+        [sg.Multiline(prompt_text, size=(60, 15), key='-PROMPT_TEXT-', expand_x=True, expand_y=True)],
+        [sg.Button("Save", key='-SAVE-'), sg.Button("Cancel")]
+    ]
+    
+    window = sg.Window("Edit Prompt", layout, modal=True, resizable=True)
+    
+    edited_prompt_data = None
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'Cancel':
+            break
+        if event == '-SAVE-':
+            new_prompt_name = values['-PROMPT_NAME-'].strip()
+            new_prompt_text = values['-PROMPT_TEXT-'].strip()
+            
+            if not new_prompt_name:
+                sg.popup_error("Prompt name cannot be empty.")
+                continue
+            if not new_prompt_text:
+                sg.popup_error("Prompt context cannot be empty.")
+                continue
+            
+            edited_prompt_data = (new_prompt_name, new_prompt_text)
+            break
+            
+    window.close()
+    return edited_prompt_data
+
 # --- Main Application Logic ---
 
 def main():
@@ -88,8 +126,8 @@ def main():
         [sg.Combo(prompt_names, default_value=prompt_names[0] if prompt_names else '', key='-PROMPT_CHOICE-', readonly=True, expand_x=True)],
         [sg.Text("Enter your question or prompt:")],
         [sg.Multiline(size=(80, 10), key='-QUESTION-', expand_x=True, expand_y=True)],
-        # --- MODIFIED: Added the 'Add Prompt' button ---
-        [sg.Button("Launch", key='-LAUNCH-'), sg.Button("Add Prompt", key='-ADD-'), sg.Button("Exit")]
+        # --- MODIFIED: Added 'Add', 'Edit', and 'Delete' buttons ---
+        [sg.Button("Launch", key='-LAUNCH-'), sg.Button("Add Prompt", key='-ADD-'), sg.Button("Edit Prompt", key='-EDIT-'), sg.Button("Delete Prompt", key='-DELETE-'), sg.Button("Exit")]
     ]
 
     # Create the Window
@@ -122,6 +160,45 @@ def main():
                     # Update the dropdown list in the UI immediately
                     prompt_names = list(prompts.keys())
                     window['-PROMPT_CHOICE-'].update(values=prompt_names, value=prompt_name)
+
+        # --- NEW: Event handler for the 'Edit Prompt' button ---
+        if event == '-EDIT-':
+            selected_prompt_name = values['-PROMPT_CHOICE-']
+            if not selected_prompt_name or selected_prompt_name == "Error":
+                sg.popup_error("Please select a prompt to edit.")
+                continue
+
+            prompt_text = prompts.get(selected_prompt_name, "")
+            edited_prompt = edit_prompt_window(selected_prompt_name, prompt_text)
+
+            if edited_prompt:
+                new_prompt_name, new_prompt_text = edited_prompt
+                
+                # If the name has changed, remove the old prompt
+                if new_prompt_name != selected_prompt_name:
+                    del prompts[selected_prompt_name]
+                
+                prompts[new_prompt_name] = new_prompt_text
+                
+                if save_prompts(PROMPTS_FILE, prompts):
+                    prompt_names = list(prompts.keys())
+                    window['-PROMPT_CHOICE-'].update(values=prompt_names, value=new_prompt_name)
+
+        # --- NEW: Event handler for the 'Delete Prompt' button ---
+        if event == '-DELETE-':
+            selected_prompt_name = values['-PROMPT_CHOICE-']
+            if not selected_prompt_name or selected_prompt_name == "Error":
+                sg.popup_error("Please select a prompt to delete.")
+                continue
+            
+            if sg.popup_yes_no(f"Are you sure you want to delete the prompt '{selected_prompt_name}'?") == 'Yes':
+                del prompts[selected_prompt_name]
+                
+                if save_prompts(PROMPTS_FILE, prompts):
+                    prompt_names = list(prompts.keys())
+                    # Update dropdown to the first available prompt or an empty string
+                    new_selection = prompt_names[0] if prompt_names else ''
+                    window['-PROMPT_CHOICE-'].update(values=prompt_names, value=new_selection)
 
         # If user clicks the Launch button (existing functionality)
         if event == '-LAUNCH-':
