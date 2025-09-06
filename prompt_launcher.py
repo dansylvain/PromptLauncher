@@ -7,6 +7,15 @@ import urllib.parse
 PROMPTS_FILE = '/home/dan/Scripts/prompts.json'
 DEFAULT_SEARCH_URL = 'https://chat.openai.com/?q='
 
+# taille de la fenêtre
+width, height = 800, 400  # remplace par la taille que tu veux
+
+# taille de l'écran
+screen_width, screen_height = sg.Window.get_screen_size()
+
+# calcul pour centrer
+x = (screen_width - width) // 2
+y = (screen_height - height) // 2
 # --- Helper Functions ---
 
 def load_prompts(filename):
@@ -49,7 +58,8 @@ def add_prompt_window():
     ]
     
     # 'modal=True' makes this window block the main window until it's closed
-    window = sg.Window("Add New Prompt", layout, modal=True, resizable=True)
+    window = sg.Window("Add New Prompt", layout, resizable=True,
+    location=(x, y))
     
     new_prompt_data = None
     while True:
@@ -88,7 +98,8 @@ def edit_prompt_window(prompt_name, prompt_text):
         [sg.Button("Save", key='-SAVE-'), sg.Button("Cancel")]
     ]
     
-    window = sg.Window("Edit Prompt", layout, modal=True, resizable=True)
+    window = sg.Window("Edit Prompt", layout, resizable=True,
+    location=(x, y))
     
     edited_prompt_data = None
     while True:
@@ -131,7 +142,8 @@ def main():
     ]
 
     # Create the Window
-    window = sg.Window('PromptLauncher V2', layout, resizable=True)
+    window = sg.Window('PromptLauncher V2', layout, resizable=True,
+    location=(x, y))
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
