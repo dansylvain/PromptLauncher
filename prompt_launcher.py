@@ -130,7 +130,7 @@ def main():
             
             if selected_prompt_name and selected_prompt_name != "Error":
                 pre_prompt = prompts.get(selected_prompt_name, "")
-                combined_text = f"{pre_prompt}\n\n{question}"
+                combined_text = f"voici le context: \n\n{pre_prompt}\n\nma question est: \n\n{question}"
             else:
                 combined_text = question
 
