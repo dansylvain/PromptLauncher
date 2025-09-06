@@ -59,7 +59,7 @@ def add_prompt_window():
     
     # 'modal=True' makes this window block the main window until it's closed
     window = sg.Window("Add New Prompt", layout, resizable=True,
-    location=(x, y))
+    location=(x, y), icon='/home/dan/Pictures/Apps/prompt_launcher.png')
     
     new_prompt_data = None
     while True:
@@ -99,7 +99,7 @@ def edit_prompt_window(prompt_name, prompt_text):
     ]
     
     window = sg.Window("Edit Prompt", layout, resizable=True,
-    location=(x, y))
+    location=(x, y), icon='/home/dan/Pictures/Apps/prompt_launcher.png')
     
     edited_prompt_data = None
     while True:
@@ -143,7 +143,7 @@ def main():
 
     # Create the Window
     window = sg.Window('PromptLauncher V1', layout, resizable=True,
-    location=(x, y))
+    location=(x, y), icon='/home/dan/Pictures/Apps/prompt_launcher.png')
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
