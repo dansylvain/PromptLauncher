@@ -122,7 +122,6 @@ def main():
                     # Update the dropdown list in the UI immediately
                     prompt_names = list(prompts.keys())
                     window['-PROMPT_CHOICE-'].update(values=prompt_names, value=prompt_name)
-                    sg.popup(f"Prompt '{prompt_name}' saved successfully!")
 
         # If user clicks the Launch button (existing functionality)
         if event == '-LAUNCH-':
