@@ -4,8 +4,8 @@ import webbrowser
 import urllib.parse
 
 # --- Configuration ---
-PROMPTS_FILE = 'prompts.json'
-DEFAULT_SEARCH_URL = 'https://www.google.com/search?q='
+PROMPTS_FILE = '/home/dan/Scripts/prompts.json'
+DEFAULT_SEARCH_URL = 'https://chat.openai.com/?q='
 
 # --- Helper Functions ---
 
