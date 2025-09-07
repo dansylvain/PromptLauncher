@@ -203,7 +203,8 @@ def main():
                 sg.popup_error("Please select a prompt to delete.")
                 continue
             
-            if sg.popup_yes_no(f"Are you sure you want to delete the prompt '{selected_prompt_name}'?") == 'Yes':
+            if sg.popup_yes_no(f"Are you sure you want to delete the prompt '{selected_prompt_name}'?",
+    location=(x, y), icon='/home/dan/Pictures/Apps/prompt_launcher.png') == 'Yes':
                 del prompts[selected_prompt_name]
                 
                 if save_prompts(PROMPTS_FILE, prompts):
